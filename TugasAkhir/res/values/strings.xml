@@ -9,5 +9,9 @@
     <string name="label_password">Password:</string>
     <string name="label_show_password">Show password</string>
     <string name="label_login">Login</string>
+    <string name="label_kamar_utama_1">Kamar Utama 1</string>
+    <string name="label_kamar_utama_2">Kamar Utama 2</string>
+    <string name="label_ruang_tamu">Ruang Tamu</string>
+    <string name="label_halaman">Halaman</string>
 
 </resources>
