@@ -1,0 +1,75 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" 
+    android:layout_height="wrap_content" >
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" 
+        android:orientation="vertical">
+        
+        <TextView
+	      android:id="@+id/textView1"
+	      android:layout_width="wrap_content"
+	      android:layout_height="wrap_content"
+	      android:layout_gravity="center_horizontal"
+	      android:layout_marginTop="10dp"
+	      android:layout_marginBottom="10dp"
+	      android:text="@string/label_welcome"
+	      android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+        <TableLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+            
+            <TableRow >
+                <TextView 
+                    android:id="@+id/textView1"
+                    android:text="@string/label_username"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                <EditText 
+                    android:id="@+id/editText1"
+                    android:inputType="text"
+                    android:layout_weight="2"/>
+            </TableRow>
+            
+            <TableRow 
+                android:layout_marginTop="10dp">
+                
+                <TextView 
+                    android:id="@+id/textView2"
+                    android:text="@string/label_password"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                <EditText 
+                    android:id="@+id/editText2"
+                    android:inputType="textPassword"
+                    android:layout_weight="2"/>
+            </TableRow>
+            
+        </TableLayout>
+        
+        <CheckBox 
+            android:id="@+id/checkBox1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_show_password"
+            android:onClick="doShowPassword"/>
+        
+        <Button 
+            android:id="@+id/button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/label_login"
+            android:textAppearance="?android:attr/textAppearanceMedium" 
+            android:onClick="doLogin"/>
+        
+    </LinearLayout>
+    
+</ScrollView>
