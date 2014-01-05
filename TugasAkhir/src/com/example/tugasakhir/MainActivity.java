@@ -28,6 +28,11 @@ public class MainActivity extends Activity implements OnClickListener {
 	private ConnectionTask connTask;
 	private boolean isConnected = false;
 	
+	private static final String CMD_1 = "cmd=1";
+	private static final String CMD_2 = "cmd=2";
+	private static final String CMD_3 = "cmd=3";
+	private static final String CMD_4 = "cmd=4";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -102,59 +107,112 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 	
 	private void doToggelButton1() {
-		String text = txtView1.getText().toString();
+		String text = "Sent command to Turn";
+		String result = sendCommand(CMD_1);
 		
-		if (btnToggel1.isChecked()) {
-			text += " ON";
+		if (result.startsWith("Succesfully")) {
+			if (btnToggel1.isChecked()) {
+				text += " ON ";
+			}
+			else {
+				text += " OFF ";
+			}
+			text += txtView1.getText().toString();
 		}
 		else {
-			text += " OFF";
+			text = "Failed sent command. "+result;
 		}
 		
 		Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
 	}
 	
 	private void doToggelButton2() {
-		String text = txtView2.getText().toString();
+		String text = "Sent command to Turn";
+		String result = sendCommand(CMD_2);
 		
-		if (btnToggel2.isChecked()) {
-			text += " ON";
+		if (result.startsWith("Succesfully")) {
+			if (btnToggel2.isChecked()) {
+				text += " ON ";
+			}
+			else {
+				text += " OFF ";
+			}
+			text += txtView2.getText().toString();
 		}
 		else {
-			text += " OFF";
+			text = "Failed sent command. "+result;
 		}
 		
 		Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
 	}
 
 	private void doToggelButton3() {
-		String text = txtView3.getText().toString();
+		String text = "Sent command to Turn";
+		String result = sendCommand(CMD_3);
 		
-		if (btnToggel3.isChecked()) {
-			text += " ON";
+		if (result.startsWith("Succesfully")) {
+			if (btnToggel3.isChecked()) {
+				text += " ON ";
+			}
+			else {
+				text += " OFF ";
+			}
+			text += txtView3.getText().toString();
 		}
 		else {
-			text += " OFF";
+			text = "Failed sent command. "+result;
 		}
 		
 		Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
 	}
 
 	private void doToggelButton4() {
-		String text = txtView4.getText().toString();
+		String text = "Sent command to Turn";
+		String result = sendCommand(CMD_4);
 		
-		if (btnToggel4.isChecked()) {
-			text += " ON";
+		if (result.startsWith("Succesfully")) {
+			if (btnToggel4.isChecked()) {
+				text += " ON ";
+			}
+			else {
+				text += " OFF ";
+			}
+			text += txtView4.getText().toString();
 		}
 		else {
-			text += " OFF";
+			text = "Failed sent command. "+result;
 		}
 		
 		Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
 	}
 	
-	private void processCommand(String command) {
+	private String sendCommand(String command) {
+		String result = "";
+		
+		try {
+			result = connTask.sendCommand(command);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = e.getMessage();
+		}
+		
+		return result;
+	}
+	
+	private void processReceiveCommand(String command) {
 		// TODO
+		if (command.equals(CMD_1)) {
+			
+		}
+		else if (command.equals(CMD_2)) {
+			
+		}
+		else if (command.equals(CMD_3)) {
+			
+		}
+		else if (command.equals(CMD_4)) {
+			
+		}
 	}
 
 	private void changeConnectionStatus(boolean isConnected) {
@@ -233,7 +291,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			
 			if (values.length > 0) {
 				String command = new String(values[0]);
-				processCommand(command);
+				processReceiveCommand(command);
 			}
 		}
 		
@@ -247,6 +305,18 @@ public class MainActivity extends Activity implements OnClickListener {
 		protected void onPostExecute(Void result) {
 			Log.v(getClass().getName(), "onPostExecute()");
 			changeConnectionStatus(false);
+		}
+		
+		public String sendCommand(String command) throws Exception {
+			String result = "";
+			if (mSocket.isConnected()) {
+				mOut.write(command.getBytes());
+				result = "Succesfully send command.";
+			}
+			else {
+				result = "Cannot send command, connection is closed.";
+			}
+			return result;
 		}
 		
 		public void closeConnection() {
