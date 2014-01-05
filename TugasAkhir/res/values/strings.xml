@@ -13,5 +13,7 @@
     <string name="label_kamar_utama_2">Kamar Utama 2</string>
     <string name="label_ruang_tamu">Ruang Tamu</string>
     <string name="label_halaman">Halaman</string>
+    <string name="label_connect">Connect</string>
+    <string name="label_disconnect">Disconnect</string>
 
 </resources>

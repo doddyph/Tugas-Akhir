@@ -7,6 +7,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
+        
+        <Button android:id="@+id/button_connect"
+        	android:layout_width="match_parent"
+        	android:layout_height="wrap_content"
+        	android:layout_marginTop="5dip"
+        	android:text="@string/label_connect" />
 
         <TableLayout
             android:layout_width="match_parent"
