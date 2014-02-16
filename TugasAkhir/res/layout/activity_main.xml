@@ -12,7 +12,16 @@
         	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:layout_marginTop="5dip"
-        	android:text="@string/label_connect" />
+        	android:text="@string/label_connect"
+        	android:onClick="connect"/>
+        
+        <Button android:id="@+id/button_disconnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:text="@string/label_disconnect"
+            android:onClick="disconnect"
+            android:visibility="gone"/>
 
         <TableLayout
             android:layout_width="match_parent"
@@ -27,11 +36,19 @@
                     android:id="@+id/textView1"
                     android:text="@string/label_kamar_utama_1"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:textAppearance="?android:attr/textAppearanceMedium"/>
+                <TextView android:id="@+id/textStatus1"
+                    android:gravity="center_vertical|left"
+                    android:layout_weight="1"
+                    android:text="@string/label_off"
+                    android:textColor="@color/text_color_red"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold"/>
                 <ToggleButton 
                     android:id="@+id/toggleButton1"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:onClick=""/>
             </TableRow>
 
             <TableRow
@@ -42,8 +59,15 @@
                     android:id="@+id/textView2"
                     android:text="@string/label_ruang_tamu"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:textAppearance="?android:attr/textAppearanceMedium"/>
+                <TextView android:id="@+id/textStatus2"
+                    android:gravity="center_vertical|left"
+                    android:layout_weight="1"
+                    android:text="@string/label_off"
+                    android:textColor="@color/text_color_red"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold"/>
                 <ToggleButton 
                     android:id="@+id/toggleButton2"
                     android:layout_weight="1"/>
@@ -57,8 +81,15 @@
                     android:id="@+id/textView3"
                     android:text="@string/label_kamar_utama_2"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:textAppearance="?android:attr/textAppearanceMedium"/>
+                <TextView android:id="@+id/textStatus3"
+                    android:gravity="center_vertical|left"
+                    android:layout_weight="1"
+                    android:text="@string/label_off"
+                    android:textColor="@color/text_color_red"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold"/>
                 <ToggleButton 
                     android:id="@+id/toggleButton3"
                     android:layout_weight="1"/>
@@ -71,9 +102,16 @@
                 <TextView 
                     android:id="@+id/textView4"
                     android:text="@string/label_halaman"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:layout_gravity="center_vertical"
                     android:textAppearance="?android:attr/textAppearanceMedium"/>
+                <TextView android:id="@+id/textStatus4"
+                    android:gravity="center_vertical|left"
+                    android:layout_weight="1"
+                    android:text="@string/label_off"
+                    android:textColor="@color/text_color_red"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold"/>
                 <ToggleButton 
                     android:id="@+id/toggleButton4"
                     android:layout_weight="1"/>

@@ -15,9 +15,6 @@ public class LoginActivity extends Activity {
 	private EditText username, password;
 	private CheckBox checkBoxShowPasswd;
 	
-	private static final String USERNAME = "hendri";
-	private static final String PASSWORD = "tugas akhir";
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,33 +29,16 @@ public class LoginActivity extends Activity {
 		switch (v.getId()) {
 		case R.id.checkBox1:
 			if (checkBoxShowPasswd.isChecked()) {
-				showPassword(true);
+				password.setTransformationMethod(null);
 			}
 			else {
-				showPassword(false);
+				password.setTransformationMethod(new PasswordTransformationMethod());
 			}
 			break;
 		}
 	}
 	
-	private void showPassword(boolean show) {
-		if (show) {
-			password.setTransformationMethod(null);
-		}
-		else {
-			password.setTransformationMethod(new PasswordTransformationMethod());
-		}
-	}
-	
-	public void doLogin(View v) {
-		switch (v.getId()) {
-		case R.id.button1:
-			login();
-			break;
-		}
-	}
-	
-	private void login() {
+	public void login(View v) {
 		String txtUsername = username.getText().toString();
 		String txtPassword = password.getText().toString();
 		String txtToast = "";
@@ -69,10 +49,10 @@ public class LoginActivity extends Activity {
 		else if (txtPassword.length() == 0) {
 			txtToast = "Please insert password";
 		}
-		else if (!txtUsername.equals(USERNAME)) {
+		else if (!txtUsername.equals(Setting.USERNAME)) {
 			txtToast = "Wrong username!";
 		}
-		else if (!txtPassword.equals(PASSWORD)) {
+		else if (!txtPassword.equals(Setting.PASSWORD)) {
 			txtToast = "Wrong password!";
 		}
 		

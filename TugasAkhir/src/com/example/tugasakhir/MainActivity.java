@@ -1,16 +1,8 @@
 package com.example.tugasakhir;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
-
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,17 +13,16 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends Activity implements OnClickListener {
 
-	private Button btnConnect;
+	private Button btnConnect, btnDisconnect;
 	private TextView txtView1, txtView2, txtView3, txtView4;
+	private TextView txtStatus1, txtStatus2, txtStatus3, txtStatus4;
 	private ToggleButton btnToggel1, btnToggel2, btnToggel3, btnToggel4;
 	
 	private ConnectionTask connTask;
 	private boolean isConnected = false;
+	private String currentCommand = Command.CMD_1_ON;
 	
-	private static final String CMD_1 = "cmd=1";
-	private static final String CMD_2 = "cmd=2";
-	private static final String CMD_3 = "cmd=3";
-	private static final String CMD_4 = "cmd=4";
+	private static final String TAG = "MainActivity";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +30,17 @@ public class MainActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_main);
 		
 		btnConnect = (Button) findViewById(R.id.button_connect);
-		btnConnect.setOnClickListener(this);
+		btnDisconnect = (Button) findViewById(R.id.button_disconnect);
 		
 		txtView1 = (TextView) findViewById(R.id.textView1);
 		txtView2 = (TextView) findViewById(R.id.textView2);
 		txtView3 = (TextView) findViewById(R.id.textView3);
 		txtView4 = (TextView) findViewById(R.id.textView4);
+		
+		txtStatus1 = (TextView) findViewById(R.id.textStatus1);
+		txtStatus2 = (TextView) findViewById(R.id.textStatus2);
+		txtStatus3 = (TextView) findViewById(R.id.textStatus3);
+		txtStatus4 = (TextView) findViewById(R.id.textStatus4);
 		
 		btnToggel1 = (ToggleButton) findViewById(R.id.toggleButton1);
 		btnToggel1.setOnClickListener(this);
@@ -58,17 +54,21 @@ public class MainActivity extends Activity implements OnClickListener {
 		disableAllToggleButton();
 	}
 	
+	public void connect(View v) {
+		connTask = (ConnectionTask) new ConnectionTask(mHandler).execute();
+	}
+	
+	public void disconnect(View v) {
+		if (connTask != null) {
+			connTask.cancel(true);
+			connTask = null;
+		}
+		disableAllToggleButton();
+	}
+	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.button_connect:
-			if (isConnected) {
-				doDisconnect();
-			}
-			else {
-				doConnect();
-			}
-			break;
 		case R.id.toggleButton1:
 			doToggelButton1();
 			break;
@@ -82,14 +82,6 @@ public class MainActivity extends Activity implements OnClickListener {
 			doToggelButton4();
 			break;
 		}
-	}
-	
-	private void doConnect() {
-		
-	}
-	
-	private void doDisconnect() {
-		
 	}
 	
 	private void disableAllToggleButton() {
@@ -107,234 +99,185 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 	
 	private void doToggelButton1() {
-		String text = "Sent command to Turn";
-		String result = sendCommand(CMD_1);
-		
-		if (result.startsWith("Succesfully")) {
-			if (btnToggel1.isChecked()) {
-				text += " ON ";
-			}
-			else {
-				text += " OFF ";
-			}
-			text += txtView1.getText().toString();
+		if (btnToggel1.isChecked()) {
+			currentCommand = Command.CMD_1_OFF;
 		}
 		else {
-			text = "Failed sent command. "+result;
+			currentCommand = Command.CMD_1_ON;
 		}
-		
-		Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+		sendCommand();
 	}
 	
 	private void doToggelButton2() {
-		String text = "Sent command to Turn";
-		String result = sendCommand(CMD_2);
-		
-		if (result.startsWith("Succesfully")) {
-			if (btnToggel2.isChecked()) {
-				text += " ON ";
-			}
-			else {
-				text += " OFF ";
-			}
-			text += txtView2.getText().toString();
+		if (btnToggel2.isChecked()) {
+			currentCommand = Command.CMD_2_OFF;
 		}
 		else {
-			text = "Failed sent command. "+result;
+			currentCommand = Command.CMD_2_ON;
 		}
-		
-		Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+		sendCommand();
 	}
 
 	private void doToggelButton3() {
-		String text = "Sent command to Turn";
-		String result = sendCommand(CMD_3);
-		
-		if (result.startsWith("Succesfully")) {
-			if (btnToggel3.isChecked()) {
-				text += " ON ";
-			}
-			else {
-				text += " OFF ";
-			}
-			text += txtView3.getText().toString();
+		if (btnToggel3.isChecked()) {
+			currentCommand = Command.CMD_3_OFF;
 		}
 		else {
-			text = "Failed sent command. "+result;
+			currentCommand = Command.CMD_3_ON;
 		}
-		
-		Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+		sendCommand();
 	}
 
 	private void doToggelButton4() {
-		String text = "Sent command to Turn";
-		String result = sendCommand(CMD_4);
-		
-		if (result.startsWith("Succesfully")) {
-			if (btnToggel4.isChecked()) {
-				text += " ON ";
-			}
-			else {
-				text += " OFF ";
-			}
-			text += txtView4.getText().toString();
+		if (btnToggel4.isChecked()) {
+			currentCommand = Command.CMD_4_OFF;
 		}
 		else {
-			text = "Failed sent command. "+result;
+			currentCommand = Command.CMD_4_ON;
 		}
-		
-		Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+		sendCommand();
 	}
 	
-	private String sendCommand(String command) {
-		String result = "";
-		
+	private void sendCommand() {
 		try {
-			result = connTask.sendCommand(command);
+			connTask.sendCommand(currentCommand);
 		} catch (Exception e) {
-			e.printStackTrace();
-			result = e.getMessage();
+			Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
 		}
-		
-		return result;
 	}
 	
-	private void processReceiveCommand(String command) {
-		// TODO
-		if (command.equals(CMD_1)) {
+	private Handler mHandler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			Bundle b = msg.getData();
 			
+			if (b.containsKey(BundleKey.CONNECTION_STATUS_KEY)) {
+				boolean connected = b.getBoolean(BundleKey.CONNECTION_STATUS_KEY);
+				setConnectionStatus(connected);
+			}
+			else if (b.containsKey(BundleKey.SEND_COMMAND_KEY)) {
+				boolean sent = b.getBoolean(BundleKey.SEND_COMMAND_KEY);
+				sendCommandStatus(sent);
+			}
+			else if (b.containsKey(BundleKey.RECEIVE_COMMAND_KEY)) {
+				String command = b.getString(BundleKey.RECEIVE_COMMAND_KEY);
+				receiveCommand(command);
+			}
+		};
+	};
+	
+	private void setConnectionStatus(boolean connected) {
+		Log.v(TAG, "setConnectionStatus() status: "+connected);
+		isConnected = connected;
+		
+		if (isConnected) {
+			Toast.makeText(this, R.string.status_connected, Toast.LENGTH_SHORT).show();
+			enableAllToggleButton();
+			
+			btnConnect.setVisibility(View.GONE);
+			btnDisconnect.setVisibility(View.VISIBLE);
 		}
-		else if (command.equals(CMD_2)) {
+		else {
+			Toast.makeText(this, R.string.status_disconnected, Toast.LENGTH_SHORT).show();
+			disableAllToggleButton();
 			
+			btnConnect.setVisibility(View.VISIBLE);
+			btnDisconnect.setVisibility(View.GONE);
+			connTask = null;
 		}
-		else if (command.equals(CMD_3)) {
-			
+	}
+	
+	private void sendCommandStatus(boolean sent) {
+		Log.v(TAG, "sendCommandStatus() status: "+sent);
+		StringBuilder text = new StringBuilder();
+		
+		if (currentCommand.equals(Command.CMD_1_ON)) {
+			text.append("Turn ON ");
+			text.append(txtView1.getText().toString()).append(' ');
 		}
-		else if (command.equals(CMD_4)) {
-			
+		else if (currentCommand.equals(Command.CMD_1_OFF)) {
+			text.append("Turn OFF ");
+			text.append(txtView1.getText().toString()).append(' ');
+		}
+		else if (currentCommand.equals(Command.CMD_2_ON)) {
+			text.append("Turn ON ");
+			text.append(txtView2.getText().toString()).append(' ');
+		}
+		else if (currentCommand.equals(Command.CMD_2_OFF)) {
+			text.append("Turn OFF ");
+			text.append(txtView2.getText().toString()).append(' ');
+		}
+		else if (currentCommand.equals(Command.CMD_3_ON)) {
+			text.append("Turn ON ");
+			text.append(txtView3.getText().toString()).append(' ');
+		}
+		else if (currentCommand.equals(Command.CMD_3_OFF)) {
+			text.append("Turn OFF ");
+			text.append(txtView3.getText().toString()).append(' ');
+		}
+		else if (currentCommand.equals(Command.CMD_4_ON)) {
+			text.append("Turn ON ");
+			text.append(txtView4.getText().toString()).append(' ');
+		}
+		else if (currentCommand.equals(Command.CMD_4_OFF)) {
+			text.append("Turn OFF ");
+			text.append(txtView4.getText().toString()).append(' ');
+		}
+		
+		if (sent) {
+			text.append("Sent.");
+		}
+		else {
+			text.append("Failed.");
+		}
+		
+		Toast.makeText(this, text.toString(), Toast.LENGTH_SHORT).show();
+	}
+	
+	private void receiveCommand(String command) {
+		Log.v(TAG, "processReceiveCommand() command: "+command);
+		
+		if (command.equals(Command.CMD_1_ON)) {
+			txtStatus1.setText(R.string.label_on);
+			txtStatus1.setTextColor(getResources().getColor(R.color.text_color_green));
+		}
+		else if (command.equals(Command.CMD_1_OFF)) {
+			txtStatus1.setText(R.string.label_off);
+			txtStatus1.setTextColor(getResources().getColor(R.color.text_color_red));
+		}
+		else if (command.equals(Command.CMD_2_ON)) {
+			txtStatus2.setText(R.string.label_on);
+			txtStatus2.setTextColor(getResources().getColor(R.color.text_color_green));
+		}
+		else if (command.equals(Command.CMD_2_OFF)) {
+			txtStatus2.setText(R.string.label_off);
+			txtStatus2.setTextColor(getResources().getColor(R.color.text_color_red));
+		}
+		else if (command.equals(Command.CMD_3_ON)) {
+			txtStatus3.setText(R.string.label_on);
+			txtStatus3.setTextColor(getResources().getColor(R.color.text_color_green));
+		}
+		else if (command.equals(Command.CMD_3_OFF)) {
+			txtStatus3.setText(R.string.label_off);
+			txtStatus3.setTextColor(getResources().getColor(R.color.text_color_red));
+		}
+		else if (command.equals(Command.CMD_4_ON)) {
+			txtStatus4.setText(R.string.label_on);
+			txtStatus4.setTextColor(getResources().getColor(R.color.text_color_green));
+		}
+		else if (command.equals(Command.CMD_4_OFF)) {
+			txtStatus4.setText(R.string.label_off);
+			txtStatus4.setTextColor(getResources().getColor(R.color.text_color_red));
 		}
 	}
 
-	private void changeConnectionStatus(boolean isConnected) {
-		Log.v(getClass().getName(), "changeConnectionStatus() isConnected: "+isConnected);
-		this.isConnected = isConnected;
-		
-		if (this.isConnected) {
-			Toast.makeText(getApplicationContext(), 
-					"Successfully connected to server", 
-					Toast.LENGTH_SHORT).show();
-			btnConnect.setText(R.string.label_disconnect);
-			enableAllToggleButton();
-		}
-		else {
-			Toast.makeText(getApplicationContext(), 
-					"Disconnected from server", 
-					Toast.LENGTH_SHORT).show();
-			btnConnect.setText(R.string.label_connect);
-			disableAllToggleButton();
-		}
-	}
-	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		
+		Log.v(TAG, "onDestroy()");
 		if (connTask != null) {
 			connTask.cancel(true);
+			connTask = null;
 		}
 	}
 	
-	class ConnectionTask extends AsyncTask<Void, byte[], Void> {
-		
-		private Socket mSocket;
-		private InputStream mIn;
-		private OutputStream mOut;
-		private BufferedReader mBufferedReader; // to store the incoming bytes from server
-		
-		private String mIPAddress = "";
-		private int mPort = 8888;
-		private boolean goRun = true;
-		
-		@Override
-		protected Void doInBackground(Void... params) {
-			Log.v(getClass().getName(), "doInBackground()");
-			
-			try {
-				mSocket = new Socket();
-				SocketAddress socketAddress = new InetSocketAddress(mIPAddress, mPort);
-				mSocket.connect(socketAddress, 5*1000);//5 second connection timeout
-				
-				if (mSocket.isConnected()) {
-					changeConnectionStatus(true);
-					
-					mIn = mSocket.getInputStream();
-					mOut = mSocket.getOutputStream();
-					mBufferedReader = new BufferedReader(new InputStreamReader(mIn));
-					
-					while (goRun) {
-						String msgFromServer = mBufferedReader.readLine();
-						byte[] msgBytes = msgFromServer.getBytes();
-						publishProgress(msgBytes);
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				closeConnection();
-			}
-			
-			return null;
-		}
-		
-		@Override
-		protected void onProgressUpdate(byte[]... values) {
-			
-			if (values.length > 0) {
-				String command = new String(values[0]);
-				processReceiveCommand(command);
-			}
-		}
-		
-		@Override
-		protected void onCancelled() {
-			Log.v(getClass().getName(), "onCancelled()");
-			goRun = false;
-		}
-		
-		@Override
-		protected void onPostExecute(Void result) {
-			Log.v(getClass().getName(), "onPostExecute()");
-			changeConnectionStatus(false);
-		}
-		
-		public String sendCommand(String command) throws Exception {
-			String result = "";
-			if (mSocket.isConnected()) {
-				mOut.write(command.getBytes());
-				result = "Succesfully send command.";
-			}
-			else {
-				result = "Cannot send command, connection is closed.";
-			}
-			return result;
-		}
-		
-		public void closeConnection() {
-			Log.v(getClass().getName(), "closeConnection()");
-			
-			try {
-				if (mOut != null) {
-					mOut.close();
-				}
-				if (mIn != null) {
-					mIn.close();
-				}
-				if (mSocket != null) {
-					mSocket.close();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
 }

@@ -13,7 +13,14 @@
     <string name="label_kamar_utama_2">Kamar Utama 2</string>
     <string name="label_ruang_tamu">Ruang Tamu</string>
     <string name="label_halaman">Halaman</string>
-    <string name="label_connect">Connect</string>
-    <string name="label_disconnect">Disconnect</string>
+    <string name="label_on">ON</string>
+    <string name="label_off">OFF</string>
+    <string name="label_connect">Connect to Arduino</string>
+    <string name="label_disconnect">Disconnect from Arduino</string>
+    <string name="status_connected">Successfully connected to Arduino</string>
+    <string name="status_disconnected">Disconnected from Arduino</string>
+    
+    <color name="text_color_green">#00FF00</color>
+    <color name="text_color_red">#FF0000</color>
 
 </resources>
