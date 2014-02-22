@@ -19,6 +19,8 @@
     <string name="label_disconnect">Disconnect from Arduino</string>
     <string name="status_connected">Successfully connected to Arduino</string>
     <string name="status_disconnected">Disconnected from Arduino</string>
+    <string name="no_connection_title">No Internet Connection</string>
+    <string name="no_connection_message">You do not have internet connection.</string>
     
     <color name="text_color_green">#00FF00</color>
     <color name="text_color_red">#FF0000</color>

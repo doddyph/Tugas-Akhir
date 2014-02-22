@@ -1,4 +1,6 @@
-package com.example.tugasakhir;
+package com.tugasakhir.droidduino;
+
+import com.example.tugasakhir.R;
 
 import android.os.Bundle;
 import android.app.Activity;

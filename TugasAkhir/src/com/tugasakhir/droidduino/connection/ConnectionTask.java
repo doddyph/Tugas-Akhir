@@ -1,4 +1,4 @@
-package com.example.tugasakhir;
+package com.tugasakhir.droidduino.connection;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +14,10 @@ import android.os.Message;
 import android.util.Log;
 
 public class ConnectionTask extends AsyncTask<Void, byte[], Void> {
+	
+	private static final String IP_ADDRESS = "192.168.1.2";
+	private static final int PORT = 8888;
+	private static final int TIMEOUT = 5*1000;// 5 seconds connection timeout
 	
 	private Handler mHandler;
 	private Socket mSocket;
@@ -35,8 +38,7 @@ public class ConnectionTask extends AsyncTask<Void, byte[], Void> {
 		
 		try {
 			mSocket = new Socket();
-			SocketAddress socketAddress = new InetSocketAddress(Setting.IP_ADDRESS, Setting.PORT);
-			mSocket.connect(socketAddress, 5*1000);//5 second connection timeout
+			mSocket.connect(new InetSocketAddress(IP_ADDRESS, PORT), TIMEOUT);
 			
 			if (mSocket.isConnected()) {
 				setConnectionStatus(true);
@@ -90,7 +92,7 @@ public class ConnectionTask extends AsyncTask<Void, byte[], Void> {
 		
 		if (mHandler != null) {
 			Bundle b = new Bundle();
-			b.putBoolean(BundleKey.CONNECTION_STATUS_KEY, connected);
+			b.putBoolean(PayloadKey.CONNECTION_STATUS, connected);
 			Message msg = new Message();
 			msg.setData(b);
 			mHandler.sendMessage(msg);
@@ -108,7 +110,7 @@ public class ConnectionTask extends AsyncTask<Void, byte[], Void> {
 		
 		if (mHandler != null) {
 			Bundle b = new Bundle();
-			b.putBoolean(BundleKey.SEND_COMMAND_KEY, sent);
+			b.putBoolean(PayloadKey.SEND_MESSAGE, sent);
 			Message msg = new Message();
 			msg.setData(b);
 			mHandler.sendMessage(msg);
@@ -120,7 +122,7 @@ public class ConnectionTask extends AsyncTask<Void, byte[], Void> {
 		
 		if (mHandler != null) {
 			Bundle b = new Bundle();
-			b.putString(BundleKey.RECEIVE_COMMAND_KEY, command);
+			b.putString(PayloadKey.RECEIVE_MESSAGE, command);
 			Message msg = new Message();
 			msg.setData(b);
 			mHandler.sendMessage(msg);
