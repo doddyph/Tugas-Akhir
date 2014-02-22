@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TugasAkhir</string>
+    <string name="app_name">DroiDuino</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="label_welcome">Welcome</string>
@@ -21,6 +21,7 @@
     <string name="status_disconnected">Disconnected from Arduino</string>
     <string name="no_connection_title">No Internet Connection</string>
     <string name="no_connection_message">You do not have internet connection.</string>
+    <string name="lamp_on_off">Lamp On Off</string>
     
     <color name="text_color_green">#00FF00</color>
     <color name="text_color_red">#FF0000</color>

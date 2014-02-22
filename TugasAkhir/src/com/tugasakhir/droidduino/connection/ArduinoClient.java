@@ -12,7 +12,7 @@ import android.util.Log;
 
 public class ArduinoClient {
 
-	private static final String IP_ADDRESS = "192.168.1.2";
+	private static final String IP_ADDRESS = "192.168.0.103";
 	private static final int PORT = 8888;
 	private static final int TIMEOUT = 5*1000;// 5 seconds connection timeout
 	private static final String TAG = "ArduinoClient";

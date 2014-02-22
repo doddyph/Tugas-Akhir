@@ -27,6 +27,8 @@ public final class R {
     public static final class drawable {
         public static final int fail=0x7f020000;
         public static final int ic_launcher=0x7f020001;
+        public static final int lamp_off_48=0x7f020002;
+        public static final int lamp_on_48=0x7f020003;
     }
     public static final class id {
         public static final int action_settings=0x7f090011;
@@ -35,14 +37,14 @@ public final class R {
         public static final int checkBox1=0x7f090004;
         public static final int editText1=0x7f090001;
         public static final int editText2=0x7f090003;
-        public static final int textStatus1=0x7f090007;
-        public static final int textStatus2=0x7f090009;
-        public static final int textStatus3=0x7f09000c;
-        public static final int textStatus4=0x7f09000f;
+        public static final int imageview_lamp1=0x7f090007;
+        public static final int imageview_lamp2=0x7f090009;
+        public static final int imageview_lamp3=0x7f09000b;
+        public static final int imageview_lamp4=0x7f09000e;
         public static final int textView1=0x7f090000;
         public static final int textView2=0x7f090002;
-        public static final int textView3=0x7f09000b;
-        public static final int textView4=0x7f09000e;
+        public static final int textView3=0x7f09000c;
+        public static final int textView4=0x7f09000f;
         public static final int toggleButton1=0x7f090008;
         public static final int toggleButton2=0x7f09000a;
         public static final int toggleButton3=0x7f09000d;
@@ -72,6 +74,7 @@ public final class R {
         public static final int label_show_password=0x7f050006;
         public static final int label_username=0x7f050004;
         public static final int label_welcome=0x7f050003;
+        public static final int lamp_on_off=0x7f050014;
         public static final int no_connection_message=0x7f050013;
         public static final int no_connection_title=0x7f050012;
         public static final int status_connected=0x7f050010;

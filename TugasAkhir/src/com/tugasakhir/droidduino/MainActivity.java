@@ -10,11 +10,14 @@ import com.tugasakhir.droidduino.util.Util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -23,8 +26,10 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 
 	private Button btnConnect, btnDisconnect;
 	private TextView txtView1, txtView2, txtView3, txtView4;
-	private TextView txtStatus1, txtStatus2, txtStatus3, txtStatus4;
+	private ImageView imgStatus1, imgStatus2, imgStatus3, imgStatus4;
+//	private TextView txtStatus1, txtStatus2, txtStatus3, txtStatus4;
 	private ToggleButton btnToggel1, btnToggel2, btnToggel3, btnToggel4;
+	private Drawable lampOn, lampOff;
 	
 	private ArduinoClient client;
 	private ConnectionTask2 connTask;
@@ -45,10 +50,14 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 		txtView3 = (TextView) findViewById(R.id.textView3);
 		txtView4 = (TextView) findViewById(R.id.textView4);
 		
-		txtStatus1 = (TextView) findViewById(R.id.textStatus1);
-		txtStatus2 = (TextView) findViewById(R.id.textStatus2);
-		txtStatus3 = (TextView) findViewById(R.id.textStatus3);
-		txtStatus4 = (TextView) findViewById(R.id.textStatus4);
+		imgStatus1 = (ImageView) findViewById(R.id.imageview_lamp1);
+		imgStatus2 = (ImageView) findViewById(R.id.imageview_lamp2);
+		imgStatus3 = (ImageView) findViewById(R.id.imageview_lamp3);
+		imgStatus4 = (ImageView) findViewById(R.id.imageview_lamp4);
+//		txtStatus1 = (TextView) findViewById(R.id.textStatus1);
+//		txtStatus2 = (TextView) findViewById(R.id.textStatus2);
+//		txtStatus3 = (TextView) findViewById(R.id.textStatus3);
+//		txtStatus4 = (TextView) findViewById(R.id.textStatus4);
 		
 		btnToggel1 = (ToggleButton) findViewById(R.id.toggleButton1);
 		btnToggel1.setOnClickListener(this);
@@ -60,6 +69,10 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 		btnToggel4.setOnClickListener(this);
 		
 		disableAllToggleButton();
+		
+		Resources res = getResources();
+		lampOn = res.getDrawable(R.drawable.lamp_on_48);
+		lampOff = res.getDrawable(R.drawable.lamp_off_48);
 	}
 	
 	public void connect(View v) {
@@ -114,40 +127,32 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	}
 	
 	private void doToggelButton1() {
+		currentMessage = CmdMessage.CMD_1_OFF;
 		if (btnToggel1.isChecked()) {
-			currentMessage = CmdMessage.CMD_1_OFF;
-		}
-		else {
 			currentMessage = CmdMessage.CMD_1_ON;
 		}
 		sendMessage();
 	}
 	
 	private void doToggelButton2() {
+		currentMessage = CmdMessage.CMD_2_OFF;
 		if (btnToggel2.isChecked()) {
-			currentMessage = CmdMessage.CMD_2_OFF;
-		}
-		else {
 			currentMessage = CmdMessage.CMD_2_ON;
 		}
 		sendMessage();
 	}
 
 	private void doToggelButton3() {
+		currentMessage = CmdMessage.CMD_3_OFF;
 		if (btnToggel3.isChecked()) {
-			currentMessage = CmdMessage.CMD_3_OFF;
-		}
-		else {
 			currentMessage = CmdMessage.CMD_3_ON;
 		}
 		sendMessage();
 	}
 
 	private void doToggelButton4() {
+		currentMessage = CmdMessage.CMD_4_OFF;
 		if (btnToggel4.isChecked()) {
-			currentMessage = CmdMessage.CMD_4_OFF;
-		}
-		else {
 			currentMessage = CmdMessage.CMD_4_ON;
 		}
 		sendMessage();
@@ -167,7 +172,7 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	
 	private void sendMessage() {
 		try {
-			client.sendMessage(currentMessage);
+			client.sendMessage(currentMessage + "\n");
 		} catch (Exception e) {
 			showAlertDialog("Send Message", e.getMessage());
 		}
@@ -240,36 +245,44 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	@Override
 	public void onMessageReceived(String message) {
 		if (message.equals(CmdMessage.CMD_1_ON)) {
-			txtStatus1.setText(R.string.label_on);
-			txtStatus1.setTextColor(getResources().getColor(R.color.text_color_green));
+			imgStatus1.setImageDrawable(lampOn);
+//			txtStatus1.setText(R.string.label_on);
+//			txtStatus1.setTextColor(getResources().getColor(R.color.text_color_green));
 		}
 		else if (message.equals(CmdMessage.CMD_1_OFF)) {
-			txtStatus1.setText(R.string.label_off);
-			txtStatus1.setTextColor(getResources().getColor(R.color.text_color_red));
+			imgStatus1.setImageDrawable(lampOff);
+//			txtStatus1.setText(R.string.label_off);
+//			txtStatus1.setTextColor(getResources().getColor(R.color.text_color_red));
 		}
 		else if (message.equals(CmdMessage.CMD_2_ON)) {
-			txtStatus2.setText(R.string.label_on);
-			txtStatus2.setTextColor(getResources().getColor(R.color.text_color_green));
+			imgStatus2.setImageDrawable(lampOn);
+//			txtStatus2.setText(R.string.label_on);
+//			txtStatus2.setTextColor(getResources().getColor(R.color.text_color_green));
 		}
 		else if (message.equals(CmdMessage.CMD_2_OFF)) {
-			txtStatus2.setText(R.string.label_off);
-			txtStatus2.setTextColor(getResources().getColor(R.color.text_color_red));
+			imgStatus2.setImageDrawable(lampOff);
+//			txtStatus2.setText(R.string.label_off);
+//			txtStatus2.setTextColor(getResources().getColor(R.color.text_color_red));
 		}
 		else if (message.equals(CmdMessage.CMD_3_ON)) {
-			txtStatus3.setText(R.string.label_on);
-			txtStatus3.setTextColor(getResources().getColor(R.color.text_color_green));
+			imgStatus3.setImageDrawable(lampOn);
+//			txtStatus3.setText(R.string.label_on);
+//			txtStatus3.setTextColor(getResources().getColor(R.color.text_color_green));
 		}
 		else if (message.equals(CmdMessage.CMD_3_OFF)) {
-			txtStatus3.setText(R.string.label_off);
-			txtStatus3.setTextColor(getResources().getColor(R.color.text_color_red));
+			imgStatus3.setImageDrawable(lampOff);
+//			txtStatus3.setText(R.string.label_off);
+//			txtStatus3.setTextColor(getResources().getColor(R.color.text_color_red));
 		}
 		else if (message.equals(CmdMessage.CMD_4_ON)) {
-			txtStatus4.setText(R.string.label_on);
-			txtStatus4.setTextColor(getResources().getColor(R.color.text_color_green));
+			imgStatus4.setImageDrawable(lampOn);
+//			txtStatus4.setText(R.string.label_on);
+//			txtStatus4.setTextColor(getResources().getColor(R.color.text_color_green));
 		}
 		else if (message.equals(CmdMessage.CMD_4_OFF)) {
-			txtStatus4.setText(R.string.label_off);
-			txtStatus4.setTextColor(getResources().getColor(R.color.text_color_red));
+			imgStatus4.setImageDrawable(lampOff);
+//			txtStatus4.setText(R.string.label_off);
+//			txtStatus4.setTextColor(getResources().getColor(R.color.text_color_red));
 		}
 	}
 	
