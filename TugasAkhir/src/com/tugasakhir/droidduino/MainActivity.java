@@ -14,6 +14,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -29,10 +30,11 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	private ImageView imgStatus1, imgStatus2, imgStatus3, imgStatus4;
 	private ToggleButton btnToggel1, btnToggel2, btnToggel3, btnToggel4;
 	private Drawable lampOn, lampOff;
+//	private MenuItem mMenuSettings;
 	
-	private ArduinoClient client;
-	private ConnectionTask2 connTask;
-	private String currentMessage = CmdMessage.CMD_1_ON;
+	private ArduinoClient mClient;
+	private ConnectionTask2 mConnectionTask;
+	private String mCurrentMessage = CmdMessage.CMD_1_ON;
 	
 	private static final String TAG = "MainActivity";
 	
@@ -72,8 +74,9 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	
 	public void connect(View v) {
 		if (Util.isConnectingToInternet(this)) {
-			client = new ArduinoClient(new MessageHandler(this));
-			connTask = (ConnectionTask2) new ConnectionTask2(client).execute();
+			mClient = new ArduinoClient(new MessageHandler(this));
+			mConnectionTask = (ConnectionTask2) new ConnectionTask2(mClient).execute();
+//			showProgressBar();
 		}
 		else {
 			showAlertDialog(getString(R.string.no_connection_title),
@@ -82,14 +85,14 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	}
 	
 	public void disconnect(View v) {
-		if (client != null) {
-			client.close();
-			client = null;
+		if (mClient != null) {
+			mClient.close();
+			mClient = null;
 		}
 		
-		if (connTask != null) {
-			connTask.cancel(true);
-			connTask = null;
+		if (mConnectionTask != null) {
+			mConnectionTask.cancel(true);
+			mConnectionTask = null;
 		}
 	}
 	
@@ -137,33 +140,33 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	}
 	
 	private void doToggelButton1() {
-		currentMessage = CmdMessage.CMD_1_OFF;
+		mCurrentMessage = CmdMessage.CMD_1_OFF;
 		if (btnToggel1.isChecked()) {
-			currentMessage = CmdMessage.CMD_1_ON;
+			mCurrentMessage = CmdMessage.CMD_1_ON;
 		}
 		sendMessage();
 	}
 	
 	private void doToggelButton2() {
-		currentMessage = CmdMessage.CMD_2_OFF;
+		mCurrentMessage = CmdMessage.CMD_2_OFF;
 		if (btnToggel2.isChecked()) {
-			currentMessage = CmdMessage.CMD_2_ON;
+			mCurrentMessage = CmdMessage.CMD_2_ON;
 		}
 		sendMessage();
 	}
 
 	private void doToggelButton3() {
-		currentMessage = CmdMessage.CMD_3_OFF;
+		mCurrentMessage = CmdMessage.CMD_3_OFF;
 		if (btnToggel3.isChecked()) {
-			currentMessage = CmdMessage.CMD_3_ON;
+			mCurrentMessage = CmdMessage.CMD_3_ON;
 		}
 		sendMessage();
 	}
 
 	private void doToggelButton4() {
-		currentMessage = CmdMessage.CMD_4_OFF;
+		mCurrentMessage = CmdMessage.CMD_4_OFF;
 		if (btnToggel4.isChecked()) {
-			currentMessage = CmdMessage.CMD_4_ON;
+			mCurrentMessage = CmdMessage.CMD_4_ON;
 		}
 		sendMessage();
 	}
@@ -182,7 +185,7 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	
 	private void sendMessage() {
 		try {
-			client.sendMessage(currentMessage + "\n");
+			mClient.sendMessage(mCurrentMessage + "\n");
 		} catch (Exception e) {
 			showAlertDialog("Send Message", e.getMessage());
 		}
@@ -190,6 +193,8 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 
 	@Override
 	public void onConnectionStatus(boolean connected) {
+//		hideProgressBar();
+		
 		if (connected) {
 			enableAllToggleButton();
 			showToast(getString(R.string.status_connected));
@@ -197,7 +202,7 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 			btnConnect.setVisibility(View.GONE);
 			btnDisconnect.setVisibility(View.VISIBLE);
 			
-			currentMessage = CmdMessage.CMD_GET_STATUS;
+			mCurrentMessage = CmdMessage.CMD_GET_STATUS;
 			sendMessage();
 		}
 		else {
@@ -207,7 +212,7 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 			
 			btnConnect.setVisibility(View.VISIBLE);
 			btnDisconnect.setVisibility(View.GONE);
-			connTask = null;
+			mConnectionTask = null;
 		}
 	}
 
@@ -215,38 +220,38 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	public void onMessageSent(boolean sent) {
 		StringBuilder text = new StringBuilder();
 		
-		if (currentMessage.equals(CmdMessage.CMD_GET_STATUS)) {
+		if (mCurrentMessage.equals(CmdMessage.CMD_GET_STATUS)) {
 			text.append("Get Status").append(' ');
 		}
-		else if (currentMessage.equals(CmdMessage.CMD_1_ON)) {
+		else if (mCurrentMessage.equals(CmdMessage.CMD_1_ON)) {
 			text.append("Turn ON ");
 			text.append(txtView1.getText().toString()).append(' ');
 		}
-		else if (currentMessage.equals(CmdMessage.CMD_1_OFF)) {
+		else if (mCurrentMessage.equals(CmdMessage.CMD_1_OFF)) {
 			text.append("Turn OFF ");
 			text.append(txtView1.getText().toString()).append(' ');
 		}
-		else if (currentMessage.equals(CmdMessage.CMD_2_ON)) {
+		else if (mCurrentMessage.equals(CmdMessage.CMD_2_ON)) {
 			text.append("Turn ON ");
 			text.append(txtView2.getText().toString()).append(' ');
 		}
-		else if (currentMessage.equals(CmdMessage.CMD_2_OFF)) {
+		else if (mCurrentMessage.equals(CmdMessage.CMD_2_OFF)) {
 			text.append("Turn OFF ");
 			text.append(txtView2.getText().toString()).append(' ');
 		}
-		else if (currentMessage.equals(CmdMessage.CMD_3_ON)) {
+		else if (mCurrentMessage.equals(CmdMessage.CMD_3_ON)) {
 			text.append("Turn ON ");
 			text.append(txtView3.getText().toString()).append(' ');
 		}
-		else if (currentMessage.equals(CmdMessage.CMD_3_OFF)) {
+		else if (mCurrentMessage.equals(CmdMessage.CMD_3_OFF)) {
 			text.append("Turn OFF ");
 			text.append(txtView3.getText().toString()).append(' ');
 		}
-		else if (currentMessage.equals(CmdMessage.CMD_4_ON)) {
+		else if (mCurrentMessage.equals(CmdMessage.CMD_4_ON)) {
 			text.append("Turn ON ");
 			text.append(txtView4.getText().toString()).append(' ');
 		}
-		else if (currentMessage.equals(CmdMessage.CMD_4_OFF)) {
+		else if (mCurrentMessage.equals(CmdMessage.CMD_4_OFF)) {
 			text.append("Turn OFF ");
 			text.append(txtView4.getText().toString()).append(' ');
 		}
@@ -297,13 +302,35 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 		}
 	}
 	
+	/*private void showProgressBar() {
+		if (mMenuSettings != null) {
+			mMenuSettings.setActionView(R.layout.progressbar);
+			mMenuSettings.expandActionView();
+		}
+	}*/
+	
+	/*private void hideProgressBar() {
+		if (mMenuSettings != null) {
+			mMenuSettings.collapseActionView();
+			mMenuSettings.setActionView(null);
+		}
+	}*/
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+//		mMenuSettings = menu.findItem(R.id.action_settings);
+		return true;
+	}
+	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		Log.v(TAG, "onDestroy()");
-		if (connTask != null) {
-			connTask.cancel(true);
-			connTask = null;
+		if (mConnectionTask != null) {
+			mConnectionTask.cancel(true);
+			mConnectionTask = null;
 		}
 	}
 }
