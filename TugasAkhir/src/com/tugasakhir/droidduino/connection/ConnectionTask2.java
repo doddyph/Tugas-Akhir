@@ -20,7 +20,9 @@ public class ConnectionTask2 extends AsyncTask<Void, String, Void> {
 	
 	@Override
 	protected void onCancelled() {
-		mClient.close();
+		if (mClient != null) {
+			mClient.close();
+		}
 	}
 	
 }

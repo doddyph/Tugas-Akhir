@@ -27,7 +27,6 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	private Button btnConnect, btnDisconnect;
 	private TextView txtView1, txtView2, txtView3, txtView4;
 	private ImageView imgStatus1, imgStatus2, imgStatus3, imgStatus4;
-//	private TextView txtStatus1, txtStatus2, txtStatus3, txtStatus4;
 	private ToggleButton btnToggel1, btnToggel2, btnToggel3, btnToggel4;
 	private Drawable lampOn, lampOff;
 	
@@ -54,10 +53,6 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 		imgStatus2 = (ImageView) findViewById(R.id.imageview_lamp2);
 		imgStatus3 = (ImageView) findViewById(R.id.imageview_lamp3);
 		imgStatus4 = (ImageView) findViewById(R.id.imageview_lamp4);
-//		txtStatus1 = (TextView) findViewById(R.id.textStatus1);
-//		txtStatus2 = (TextView) findViewById(R.id.textStatus2);
-//		txtStatus3 = (TextView) findViewById(R.id.textStatus3);
-//		txtStatus4 = (TextView) findViewById(R.id.textStatus4);
 		
 		btnToggel1 = (ToggleButton) findViewById(R.id.toggleButton1);
 		btnToggel1.setOnClickListener(this);
@@ -87,11 +82,15 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	}
 	
 	public void disconnect(View v) {
+		if (client != null) {
+			client.close();
+			client = null;
+		}
+		
 		if (connTask != null) {
 			connTask.cancel(true);
 			connTask = null;
 		}
-		disableAllToggleButton();
 	}
 	
 	private void disableAllToggleButton() {
@@ -106,6 +105,17 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 		btnToggel2.setEnabled(true);
 		btnToggel3.setEnabled(true);
 		btnToggel4.setEnabled(true);
+	}
+	
+	private void turnOffAllLamp() {
+		btnToggel1.setChecked(false);
+		imgStatus1.setImageDrawable(lampOff);
+		btnToggel2.setChecked(false);
+		imgStatus2.setImageDrawable(lampOff);
+		btnToggel3.setChecked(false);
+		imgStatus3.setImageDrawable(lampOff);
+		btnToggel4.setChecked(false);
+		imgStatus4.setImageDrawable(lampOff);
 	}
 	
 	@Override
@@ -183,12 +193,18 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 		if (connected) {
 			enableAllToggleButton();
 			showToast(getString(R.string.status_connected));
+			
 			btnConnect.setVisibility(View.GONE);
 			btnDisconnect.setVisibility(View.VISIBLE);
+			
+			currentMessage = CmdMessage.CMD_GET_STATUS;
+			sendMessage();
 		}
 		else {
+			turnOffAllLamp();
 			disableAllToggleButton();
 			showToast(getString(R.string.status_disconnected));
+			
 			btnConnect.setVisibility(View.VISIBLE);
 			btnDisconnect.setVisibility(View.GONE);
 			connTask = null;
@@ -199,7 +215,10 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	public void onMessageSent(boolean sent) {
 		StringBuilder text = new StringBuilder();
 		
-		if (currentMessage.equals(CmdMessage.CMD_1_ON)) {
+		if (currentMessage.equals(CmdMessage.CMD_GET_STATUS)) {
+			text.append("Get Status").append(' ');
+		}
+		else if (currentMessage.equals(CmdMessage.CMD_1_ON)) {
 			text.append("Turn ON ");
 			text.append(txtView1.getText().toString()).append(' ');
 		}
@@ -246,43 +265,35 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	public void onMessageReceived(String message) {
 		if (message.equals(CmdMessage.CMD_1_ON)) {
 			imgStatus1.setImageDrawable(lampOn);
-//			txtStatus1.setText(R.string.label_on);
-//			txtStatus1.setTextColor(getResources().getColor(R.color.text_color_green));
+			btnToggel1.setChecked(true);
 		}
 		else if (message.equals(CmdMessage.CMD_1_OFF)) {
 			imgStatus1.setImageDrawable(lampOff);
-//			txtStatus1.setText(R.string.label_off);
-//			txtStatus1.setTextColor(getResources().getColor(R.color.text_color_red));
+			btnToggel1.setChecked(false);
 		}
 		else if (message.equals(CmdMessage.CMD_2_ON)) {
 			imgStatus2.setImageDrawable(lampOn);
-//			txtStatus2.setText(R.string.label_on);
-//			txtStatus2.setTextColor(getResources().getColor(R.color.text_color_green));
+			btnToggel2.setChecked(true);
 		}
 		else if (message.equals(CmdMessage.CMD_2_OFF)) {
 			imgStatus2.setImageDrawable(lampOff);
-//			txtStatus2.setText(R.string.label_off);
-//			txtStatus2.setTextColor(getResources().getColor(R.color.text_color_red));
+			btnToggel2.setChecked(false);
 		}
 		else if (message.equals(CmdMessage.CMD_3_ON)) {
 			imgStatus3.setImageDrawable(lampOn);
-//			txtStatus3.setText(R.string.label_on);
-//			txtStatus3.setTextColor(getResources().getColor(R.color.text_color_green));
+			btnToggel3.setChecked(true);
 		}
 		else if (message.equals(CmdMessage.CMD_3_OFF)) {
 			imgStatus3.setImageDrawable(lampOff);
-//			txtStatus3.setText(R.string.label_off);
-//			txtStatus3.setTextColor(getResources().getColor(R.color.text_color_red));
+			btnToggel3.setChecked(false);
 		}
 		else if (message.equals(CmdMessage.CMD_4_ON)) {
 			imgStatus4.setImageDrawable(lampOn);
-//			txtStatus4.setText(R.string.label_on);
-//			txtStatus4.setTextColor(getResources().getColor(R.color.text_color_green));
+			btnToggel4.setChecked(true);
 		}
 		else if (message.equals(CmdMessage.CMD_4_OFF)) {
 			imgStatus4.setImageDrawable(lampOff);
-//			txtStatus4.setText(R.string.label_off);
-//			txtStatus4.setTextColor(getResources().getColor(R.color.text_color_red));
+			btnToggel4.setChecked(false);
 		}
 	}
 	
