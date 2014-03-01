@@ -12,10 +12,11 @@ References:
 // Enter a MAC address and IP address for your controller below.
 // The IP address will be dependent on your local network:
 byte mac[]  = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-byte ip[]   = {192.168.0.103};
-//byte gateway[] = { 192, 168, 0, 1 }; //Manual setup only
-//byte subnet[]  = { 255, 255, 255, 0 }; //Manual setup only
-Server server(8888);
+IPAddress ip(192,168,0,103);
+
+// Initialize the Ethernet server library
+// with the IP address and port you want to use
+EthernetServer server(8888);
 
 int LED1 = 2;
 int LED2 = 3;
@@ -35,7 +36,6 @@ void setup() {
   
   // start the Ethernet connection and the server:
   Ethernet.begin(mac, ip);
-  //Ethernet.begin(mac, ip, gateway, subnet); //for manual setup
   server.begin();
   
   Serial.println("Server is at "+Ethernet.localIP());
@@ -44,7 +44,7 @@ void setup() {
 
 void loop() {
   // listen for incoming clients, and process request.
-  Client client = server.available();
+  EthernetClient client = server.available();
   
   if (client) {
     String commandline = ""; // where incoming commands are stored
@@ -103,6 +103,7 @@ void processCommand(String commandline) {
     
     commandline.replace("\n", "");
     server.println(commandline);
+  }  
 }
 
 void triggerPin(int pin, boolean isOn) {
