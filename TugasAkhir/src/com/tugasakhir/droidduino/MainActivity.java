@@ -300,6 +300,9 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 			imgStatus4.setImageDrawable(lampOff);
 			btnToggel4.setChecked(false);
 		}
+		else {// if failed send the command 
+			showAlertDialog("Failed", message);
+		}
 	}
 	
 	/*private void showProgressBar() {

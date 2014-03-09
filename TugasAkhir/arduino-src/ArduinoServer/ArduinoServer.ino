@@ -23,6 +23,15 @@ int LED2 = 3;
 int LED3 = 4;
 int LED4 = 5;
 
+String CMD_1_ON   = "cmd=11"; // turn on LED 1
+String CMD_2_ON   = "cmd=21"; // turn on LED 2
+String CMD_3_ON   = "cmd=31"; // turn on LED 3
+String CMD_4_ON   = "cmd=41"; // turn on LED 4
+String CMD_1_OFF  = "cmd=12"; // turn off LED 1
+String CMD_2_OFF  = "cmd=22"; // turn off LED 2
+String CMD_3_OFF  = "cmd=32"; // turn off LED 3
+String CMD_4_OFF  = "cmd=42"; // turn off LED 4
+
 void setup() { 
   Serial.begin(57600); // XBee module baud rate
   while (!Serial) {
@@ -51,13 +60,14 @@ void loop() {
     
     while (client.connected()) { // if a client is connected 
       if (client.available()) { // if client is sending
-      
         char c = client.read(); // reading the inputs from the client
-        commandline += c; // add to the command string
-        
+      
         if (c == '\n') { // if a newline character is sent from the client (commandline is fully received)
            processCommand(commandline);
            commandline = ""; //reset the commandline string
+        }
+        else {
+          commandline += c; // add to the command string
         }
       }
     }
@@ -71,49 +81,110 @@ void loop() {
 void processCommand(String commandline) {
   Serial.println("Incoming request command... "+commandline);
   String command = commandline;
-  boolean isOn = false;
+  //boolean isOn = false;
            
   if (command.indexOf("cmd=") == 0) { //if the command begins with "cmd="
     command.replace("cmd=", ""); //remove the "cmd=" from the command string
-             
-    if (command.indexOf("&on") != -1) { //if the command contain "&on"
-      command.replace("&on", "");//remove the "&on" from the command string
-      isOn = true;
-    }
-    else if (command.indexOf("&off") != -1) { //if the command contain "&off"
-      command.replace("&off", "");//remove the "&off" from the command string
-      isOn = false;
-    }
-             
     int value = convertToInt(command);
+    
     switch (value) {
-      case 1:
-        triggerPin(LED1, isOn);
+      case 11: // turn on LED 1
+        triggerPin(LED1, true);
         break;
-      case 2:
-        triggerPin(LED2, isOn);
+      case 21: // turn on LED 2
+        triggerPin(LED2, true);
         break;
-      case 3:
-        triggerPin(LED3, isOn);
+      case 31: // turn on LED 3
+        triggerPin(LED3, true);
         break;
-      case 4:
-        triggerPin(LED4, isOn);
+      case 41: // turn on LED 4
+        triggerPin(LED4, true);
+        break;
+      case 12: // turn off LED 1
+        triggerPin(LED1, false);
+        break;
+      case 22: // turn off LED 2
+        triggerPin(LED2, false);
+        break;
+      case 32: // turn off LED 3
+        triggerPin(LED3, false);
+        break;
+      case 42: // turn off LED 4
+        triggerPin(LED4, false);
+        break;    
+      case 99: // send back LEDs state
+        sendLEDState();
         break;
     }
-    
-    commandline.replace("\n", "");
-    server.println(commandline);
   }  
 }
 
 void triggerPin(int pin, boolean isOn) {
+  boolean triggerSuccess = false;
+  
   if (isOn) {
     digitalWrite(pin, HIGH);
+    
+    if (digitalRead(pin) == HIGH) {
+      triggerSuccess = true;
+    }
   }
   else {
     digitalWrite(pin, LOW);
+    
+    if (digitalRead(pin) == LOW) {
+      triggerSuccess = true;
+    }
   }
-  delay(10);
+    
+  if (!triggerSuccess) { // failed to trigger pin
+    commandLine = "Failed to turn on/off the light !";
+  }
+    
+  delay(100);
+  server.println(commandline);
+}
+
+void int sendLEDState() {
+  sendLEDState(LED1);
+  delay(100);
+  sendLEDState(LED2);
+  delay(100);
+  sendLEDState(LED3);
+  delay(100);
+  sendLEDState(LED4);
+}
+
+void void sendLEDState(int LED) {
+  String commandline = "cmd=";
+  int val = digitalRead(LED);
+  
+  switch (LED) {
+    case LED1:
+      commandline += "1";
+      break;
+    case LED2:
+      commandline += "2";
+      break;
+    case LED3:
+      commandline += "3";
+      break;
+    case LED4:
+      commandline += "4";
+      break;
+  }
+  
+  switch (val) {
+    case HIGH:
+      commandline += "1";
+      break;
+    case LOW:
+      commandline += "2";
+      break;
+  }
+  
+  delay(100);
+  server.println(commandline);
 }
 
 int convertToInt(String value) {
