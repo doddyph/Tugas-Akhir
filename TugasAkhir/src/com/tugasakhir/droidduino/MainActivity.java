@@ -218,6 +218,48 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 
 	@Override
 	public void onMessageSent(boolean sent) {
+		if (sent) {
+			StringBuilder text = new StringBuilder();
+			
+			if (mCurrentMessage.equals(CmdMessage.CMD_GET_STATUS)) {
+				text.append("Get All LEDs State");
+			}
+			else if (mCurrentMessage.equals(CmdMessage.CMD_1_ON)) {
+				text.append("Turn ON ");
+				text.append(txtView1.getText().toString());
+			}
+			else if (mCurrentMessage.equals(CmdMessage.CMD_1_OFF)) {
+				text.append("Turn OFF ");
+				text.append(txtView1.getText().toString());
+			}
+			else if (mCurrentMessage.equals(CmdMessage.CMD_2_ON)) {
+				text.append("Turn ON ");
+				text.append(txtView2.getText().toString());
+			}
+			else if (mCurrentMessage.equals(CmdMessage.CMD_2_OFF)) {
+				text.append("Turn OFF ");
+				text.append(txtView2.getText().toString());
+			}
+			else if (mCurrentMessage.equals(CmdMessage.CMD_3_ON)) {
+				text.append("Turn ON ");
+				text.append(txtView3.getText().toString());
+			}
+			else if (mCurrentMessage.equals(CmdMessage.CMD_3_OFF)) {
+				text.append("Turn OFF ");
+				text.append(txtView3.getText().toString());
+			}
+			else if (mCurrentMessage.equals(CmdMessage.CMD_4_ON)) {
+				text.append("Turn ON ");
+				text.append(txtView4.getText().toString());
+			}
+			else if (mCurrentMessage.equals(CmdMessage.CMD_4_OFF)) {
+				text.append("Turn OFF ");
+				text.append(txtView4.getText().toString());
+			}
+			
+			showToast(text.toString());
+		}
+		/*
 		StringBuilder text = new StringBuilder();
 		
 		if (mCurrentMessage.equals(CmdMessage.CMD_GET_STATUS)) {
@@ -264,6 +306,7 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 		}
 		
 		showToast(text.toString());
+		*/
 	}
 
 	@Override

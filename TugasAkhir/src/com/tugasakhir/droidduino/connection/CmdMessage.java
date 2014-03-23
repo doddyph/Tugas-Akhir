@@ -2,7 +2,7 @@ package com.tugasakhir.droidduino.connection;
 
 public class CmdMessage {
 	
-	public static final String CMD_GET_STATUS 	= "cmd=99"; // get LEDs state
+	public static final String CMD_GET_STATUS 	= "cmd=99"; // get all LEDs state
 
 	public static final String CMD_1_ON 		= "cmd=11"; // turn on LED 1
 	public static final String CMD_2_ON 		= "cmd=21"; // turn on LED 2
