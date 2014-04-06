@@ -1,0 +1,42 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" 
+    android:layout_height="wrap_content" >
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" 
+        android:orientation="vertical">
+        
+        <TableLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+            
+            <TableRow >
+                <TextView 
+                    android:id="@+id/textView3"
+                    android:text="@string/label_ipaddress"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                <EditText 
+                    android:id="@+id/editText3"
+                    android:inputType="text"
+                    android:layout_weight="3"/>
+            </TableRow>
+            
+        </TableLayout>
+        
+        <Button 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/label_save"
+            android:textAppearance="?android:attr/textAppearanceMedium" 
+            android:onClick="save"/>
+        
+    </LinearLayout>
+    
+</ScrollView>

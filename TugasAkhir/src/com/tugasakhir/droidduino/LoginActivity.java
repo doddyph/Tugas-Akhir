@@ -49,12 +49,12 @@ public class LoginActivity extends Activity {
 			txtToast = "Please insert username.";
 		}
 		else if (txtPassword.length() == 0) {
-			txtToast = "Please insert password";
+			txtToast = "Please insert password.";
 		}
-		else if (!txtUsername.equals(Setting.USERNAME)) {
+		else if (!txtUsername.equals(Settings.USERNAME)) {
 			txtToast = "Wrong username!";
 		}
-		else if (!txtPassword.equals(Setting.PASSWORD)) {
+		else if (!txtPassword.equals(Settings.PASSWORD)) {
 			txtToast = "Wrong password!";
 		}
 		

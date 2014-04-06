@@ -17,6 +17,8 @@
     <string name="label_off">OFF</string>
     <string name="label_connect">Connect to Arduino</string>
     <string name="label_disconnect">Disconnect from Arduino</string>
+    <string name="label_ipaddress">IP Address:</string>
+    <string name="label_save">Save</string>
     <string name="status_connected">Successfully connected to Arduino</string>
     <string name="status_disconnected">Disconnected from Arduino</string>
     <string name="no_connection_title">No Internet Connection</string>

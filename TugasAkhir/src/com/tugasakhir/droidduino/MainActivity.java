@@ -10,11 +10,15 @@ import com.tugasakhir.droidduino.util.Util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -26,6 +30,7 @@ import android.widget.ToggleButton;
 public class MainActivity extends Activity implements OnClickListener, MessageListener {
 
 	private Button btnConnect, btnDisconnect;
+	private TextView txtViewIpAddress;
 	private TextView txtView1, txtView2, txtView3, txtView4;
 	private ImageView imgStatus1, imgStatus2, imgStatus3, imgStatus4;
 	private ToggleButton btnToggel1, btnToggel2, btnToggel3, btnToggel4;
@@ -36,15 +41,24 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	private ConnectionTask2 mConnectionTask;
 	private String mCurrentMessage = CmdMessage.CMD_1_ON;
 	
+	private SharedPreferences sharedPreferences;
+	private String strIpAddress;
+	
 	private static final String TAG = "MainActivity";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		sharedPreferences = getSharedPreferences(Settings.PREFERENCES, Context.MODE_PRIVATE);
 		setContentView(R.layout.activity_main);
 		
 		btnConnect = (Button) findViewById(R.id.button_connect);
 		btnDisconnect = (Button) findViewById(R.id.button_disconnect);
+		
+		txtViewIpAddress = (TextView) findViewById(R.id.textView_ipAddress);
+		strIpAddress = sharedPreferences.getString(Settings.IP_ADDRESS_PREF, "");
+		txtViewIpAddress.setText("IP Address: " + (strIpAddress.equals("")? Settings.IP_ADDRESS:strIpAddress));
 		
 		txtView1 = (TextView) findViewById(R.id.textView1);
 		txtView2 = (TextView) findViewById(R.id.textView2);
@@ -70,6 +84,14 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 		Resources res = getResources();
 		lampOn = res.getDrawable(R.drawable.lamp_on_48);
 		lampOff = res.getDrawable(R.drawable.lamp_off_48);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		strIpAddress = sharedPreferences.getString(Settings.IP_ADDRESS_PREF, "");
+		txtViewIpAddress.setText("IP Address: " + (strIpAddress.equals("")? Settings.IP_ADDRESS:strIpAddress));
 	}
 	
 	public void connect(View v) {
@@ -367,6 +389,22 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 //		mMenuSettings = menu.findItem(R.id.action_settings);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			Intent i = new Intent(this, SettingsActivity.class);
+			startActivity(i);
+			break;
+		default:
+			break;
+		}
+		
 		return true;
 	}
 	

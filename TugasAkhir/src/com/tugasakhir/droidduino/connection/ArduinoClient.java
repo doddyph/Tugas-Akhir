@@ -8,11 +8,12 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import com.tugasakhir.droidduino.Settings;
+
 import android.util.Log;
 
 public class ArduinoClient {
 
-	private static final String IP_ADDRESS = "192.168.0.222";
 	private static final int PORT = 8888;
 	private static final int TIMEOUT = 5*1000;// 5 seconds connection timeout
 	private static final String TAG = "ArduinoClient";
@@ -32,7 +33,7 @@ public class ArduinoClient {
 	public void run() {
 		try {
 			mSocket = new Socket();
-			mSocket.connect(new InetSocketAddress(IP_ADDRESS, PORT), TIMEOUT);
+			mSocket.connect(new InetSocketAddress(Settings.IP_ADDRESS, PORT), TIMEOUT);
 			
 			if (mSocket.isConnected()) {
 				setConnectionStatus(true);

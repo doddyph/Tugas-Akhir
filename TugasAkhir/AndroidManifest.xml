@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.tugasakhir.droidduino.MainActivity"></activity>
+        <activity android:name="com.tugasakhir.droidduino.SettingsActivity"></activity>
     </application>
 
 </manifest>
