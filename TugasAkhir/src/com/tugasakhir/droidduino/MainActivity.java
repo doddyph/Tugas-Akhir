@@ -11,6 +11,7 @@ import com.tugasakhir.droidduino.util.Util;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -27,7 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class MainActivity extends Activity implements OnClickListener, MessageListener {
+public class MainActivity extends Activity implements OnClickListener,
+		DialogInterface.OnClickListener, MessageListener {
 
 	private Button btnConnect, btnDisconnect;
 	private TextView txtViewIpAddress;
@@ -111,7 +113,6 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 			mClient.close();
 			mClient = null;
 		}
-		
 		if (mConnectionTask != null) {
 			mConnectionTask.cancel(true);
 			mConnectionTask = null;
@@ -409,6 +410,43 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 	}
 	
 	@Override
+	public void onBackPressed() {
+		Log.v(TAG, "onDestroy()");
+		if (mClient != null && mConnectionTask != null) {
+			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+			dialog.setTitle("Connection");
+			dialog.setMessage("Disconnect from Arduino?");
+			dialog.setPositiveButton("OK", this);
+			dialog.setNegativeButton("Cancel", this);
+			dialog.show();
+		}
+		else {
+			super.onBackPressed();
+		}
+	}
+	
+	@Override
+	public void onClick(DialogInterface dialog, int which) {
+		switch (which) {
+		case DialogInterface.BUTTON_POSITIVE:
+			if (mClient != null) {
+				mClient.close();
+				mClient = null;
+			}
+			if (mConnectionTask != null) {
+				mConnectionTask.cancel(true);
+				mConnectionTask = null;
+			}
+			finish();
+			break;
+		case DialogInterface.BUTTON_NEGATIVE:
+		default:
+			//do nothing, just close the dialog.
+			break;
+		}
+	}
+	
+	/*@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		Log.v(TAG, "onDestroy()");
@@ -416,5 +454,5 @@ public class MainActivity extends Activity implements OnClickListener, MessageLi
 			mConnectionTask.cancel(true);
 			mConnectionTask = null;
 		}
-	}
+	}*/
 }

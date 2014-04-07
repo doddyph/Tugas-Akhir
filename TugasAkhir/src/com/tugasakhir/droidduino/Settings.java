@@ -7,6 +7,6 @@ public class Settings {
 	
 	public static final String USERNAME = "hendri";
 	public static final String PASSWORD = "tugas akhir";
-	public static final String IP_ADDRESS = "192.168.137.222";
+	public static final String IP_ADDRESS = "192.168.0.222";
 	
 }
