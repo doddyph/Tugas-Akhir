@@ -2,10 +2,8 @@ package com.tugasakhir.droidduino;
 
 import com.example.tugasakhir.R;
 import com.tugasakhir.droidduino.connection.ArduinoClient;
-import com.tugasakhir.droidduino.connection.CmdMessage;
-import com.tugasakhir.droidduino.connection.ConnectionTask2;
-import com.tugasakhir.droidduino.connection.MessageHandler;
-import com.tugasakhir.droidduino.connection.MessageHandler.MessageListener;
+import com.tugasakhir.droidduino.connection.CommandMessage;
+import com.tugasakhir.droidduino.connection.ConnectionMessageHandler.ConnectionListener;
 import com.tugasakhir.droidduino.util.Util;
 
 import android.app.Activity;
@@ -29,7 +27,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class MainActivity extends Activity implements OnClickListener,
-		DialogInterface.OnClickListener, MessageListener {
+		DialogInterface.OnClickListener, ConnectionListener {
 
 	private Button btnConnect, btnDisconnect;
 	private TextView txtViewIpAddress;
@@ -40,8 +38,7 @@ public class MainActivity extends Activity implements OnClickListener,
 //	private MenuItem mMenuSettings;
 	
 	private ArduinoClient mClient;
-	private ConnectionTask2 mConnectionTask;
-	private String mCurrentMessage = CmdMessage.CMD_1_ON;
+	private String mCurrentMessage = CommandMessage.CMD_1_ON;
 	
 	private SharedPreferences sharedPreferences;
 	private String strIpAddress;
@@ -98,8 +95,8 @@ public class MainActivity extends Activity implements OnClickListener,
 	
 	public void connect(View v) {
 		if (Util.isConnectingToInternet(this)) {
-			mClient = new ArduinoClient(new MessageHandler(this));
-			mConnectionTask = (ConnectionTask2) new ConnectionTask2(mClient).execute();
+			mClient = new ArduinoClient(this);
+			mClient.connect();
 //			showProgressBar();
 		}
 		else {
@@ -110,12 +107,8 @@ public class MainActivity extends Activity implements OnClickListener,
 	
 	public void disconnect(View v) {
 		if (mClient != null) {
-			mClient.close();
+			mClient.disconnect();
 			mClient = null;
-		}
-		if (mConnectionTask != null) {
-			mConnectionTask.cancel(true);
-			mConnectionTask = null;
 		}
 	}
 	
@@ -163,35 +156,35 @@ public class MainActivity extends Activity implements OnClickListener,
 	}
 	
 	private void doToggelButton1() {
-		mCurrentMessage = CmdMessage.CMD_1_OFF;
+		mCurrentMessage = CommandMessage.CMD_1_OFF;
 		if (btnToggel1.isChecked()) {
-			mCurrentMessage = CmdMessage.CMD_1_ON;
+			mCurrentMessage = CommandMessage.CMD_1_ON;
 		}
-		sendMessage();
+		sendCommand();
 	}
 	
 	private void doToggelButton2() {
-		mCurrentMessage = CmdMessage.CMD_2_OFF;
+		mCurrentMessage = CommandMessage.CMD_2_OFF;
 		if (btnToggel2.isChecked()) {
-			mCurrentMessage = CmdMessage.CMD_2_ON;
+			mCurrentMessage = CommandMessage.CMD_2_ON;
 		}
-		sendMessage();
+		sendCommand();
 	}
 
 	private void doToggelButton3() {
-		mCurrentMessage = CmdMessage.CMD_3_OFF;
+		mCurrentMessage = CommandMessage.CMD_3_OFF;
 		if (btnToggel3.isChecked()) {
-			mCurrentMessage = CmdMessage.CMD_3_ON;
+			mCurrentMessage = CommandMessage.CMD_3_ON;
 		}
-		sendMessage();
+		sendCommand();
 	}
 
 	private void doToggelButton4() {
-		mCurrentMessage = CmdMessage.CMD_4_OFF;
+		mCurrentMessage = CommandMessage.CMD_4_OFF;
 		if (btnToggel4.isChecked()) {
-			mCurrentMessage = CmdMessage.CMD_4_ON;
+			mCurrentMessage = CommandMessage.CMD_4_ON;
 		}
-		sendMessage();
+		sendCommand();
 	}
 	
 	private void showToast(String text) {
@@ -206,9 +199,9 @@ public class MainActivity extends Activity implements OnClickListener,
 		alertDialog.show();
 	}
 	
-	private void sendMessage() {
+	private void sendCommand() {
 		try {
-			mClient.sendMessage(mCurrentMessage + "\n");
+			mClient.sendCommand(mCurrentMessage + "\n");
 		} catch (Exception e) {
 			showAlertDialog("Send Message", e.getMessage());
 		}
@@ -225,8 +218,8 @@ public class MainActivity extends Activity implements OnClickListener,
 			btnConnect.setVisibility(View.GONE);
 			btnDisconnect.setVisibility(View.VISIBLE);
 			
-			mCurrentMessage = CmdMessage.CMD_GET_STATUS;
-			sendMessage();
+			mCurrentMessage = CommandMessage.CMD_GET_STATUS;
+			sendCommand();
 		}
 		else {
 			turnOffAllLamp();
@@ -235,7 +228,6 @@ public class MainActivity extends Activity implements OnClickListener,
 			
 			btnConnect.setVisibility(View.VISIBLE);
 			btnDisconnect.setVisibility(View.GONE);
-			mConnectionTask = null;
 		}
 	}
 
@@ -244,125 +236,77 @@ public class MainActivity extends Activity implements OnClickListener,
 		if (sent) {
 			StringBuilder text = new StringBuilder();
 			
-			if (mCurrentMessage.equals(CmdMessage.CMD_GET_STATUS)) {
+			if (mCurrentMessage.equals(CommandMessage.CMD_GET_STATUS)) {
 				text.append("Get All LEDs State");
 			}
-			else if (mCurrentMessage.equals(CmdMessage.CMD_1_ON)) {
+			else if (mCurrentMessage.equals(CommandMessage.CMD_1_ON)) {
 				text.append("Turn ON ");
 				text.append(txtView1.getText().toString());
 			}
-			else if (mCurrentMessage.equals(CmdMessage.CMD_1_OFF)) {
+			else if (mCurrentMessage.equals(CommandMessage.CMD_1_OFF)) {
 				text.append("Turn OFF ");
 				text.append(txtView1.getText().toString());
 			}
-			else if (mCurrentMessage.equals(CmdMessage.CMD_2_ON)) {
+			else if (mCurrentMessage.equals(CommandMessage.CMD_2_ON)) {
 				text.append("Turn ON ");
 				text.append(txtView2.getText().toString());
 			}
-			else if (mCurrentMessage.equals(CmdMessage.CMD_2_OFF)) {
+			else if (mCurrentMessage.equals(CommandMessage.CMD_2_OFF)) {
 				text.append("Turn OFF ");
 				text.append(txtView2.getText().toString());
 			}
-			else if (mCurrentMessage.equals(CmdMessage.CMD_3_ON)) {
+			else if (mCurrentMessage.equals(CommandMessage.CMD_3_ON)) {
 				text.append("Turn ON ");
 				text.append(txtView3.getText().toString());
 			}
-			else if (mCurrentMessage.equals(CmdMessage.CMD_3_OFF)) {
+			else if (mCurrentMessage.equals(CommandMessage.CMD_3_OFF)) {
 				text.append("Turn OFF ");
 				text.append(txtView3.getText().toString());
 			}
-			else if (mCurrentMessage.equals(CmdMessage.CMD_4_ON)) {
+			else if (mCurrentMessage.equals(CommandMessage.CMD_4_ON)) {
 				text.append("Turn ON ");
 				text.append(txtView4.getText().toString());
 			}
-			else if (mCurrentMessage.equals(CmdMessage.CMD_4_OFF)) {
+			else if (mCurrentMessage.equals(CommandMessage.CMD_4_OFF)) {
 				text.append("Turn OFF ");
 				text.append(txtView4.getText().toString());
 			}
 			
 			showToast(text.toString());
 		}
-		/*
-		StringBuilder text = new StringBuilder();
-		
-		if (mCurrentMessage.equals(CmdMessage.CMD_GET_STATUS)) {
-			text.append("Get Status").append(' ');
-		}
-		else if (mCurrentMessage.equals(CmdMessage.CMD_1_ON)) {
-			text.append("Turn ON ");
-			text.append(txtView1.getText().toString()).append(' ');
-		}
-		else if (mCurrentMessage.equals(CmdMessage.CMD_1_OFF)) {
-			text.append("Turn OFF ");
-			text.append(txtView1.getText().toString()).append(' ');
-		}
-		else if (mCurrentMessage.equals(CmdMessage.CMD_2_ON)) {
-			text.append("Turn ON ");
-			text.append(txtView2.getText().toString()).append(' ');
-		}
-		else if (mCurrentMessage.equals(CmdMessage.CMD_2_OFF)) {
-			text.append("Turn OFF ");
-			text.append(txtView2.getText().toString()).append(' ');
-		}
-		else if (mCurrentMessage.equals(CmdMessage.CMD_3_ON)) {
-			text.append("Turn ON ");
-			text.append(txtView3.getText().toString()).append(' ');
-		}
-		else if (mCurrentMessage.equals(CmdMessage.CMD_3_OFF)) {
-			text.append("Turn OFF ");
-			text.append(txtView3.getText().toString()).append(' ');
-		}
-		else if (mCurrentMessage.equals(CmdMessage.CMD_4_ON)) {
-			text.append("Turn ON ");
-			text.append(txtView4.getText().toString()).append(' ');
-		}
-		else if (mCurrentMessage.equals(CmdMessage.CMD_4_OFF)) {
-			text.append("Turn OFF ");
-			text.append(txtView4.getText().toString()).append(' ');
-		}
-		
-		if (sent) {
-			text.append("Sent.");
-		}
-		else {
-			text.append("Failed.");
-		}
-		
-		showToast(text.toString());
-		*/
 	}
 
 	@Override
 	public void onMessageReceived(String message) {
-		if (message.equals(CmdMessage.CMD_1_ON)) {
+		if (message.equals(CommandMessage.CMD_1_ON)) {
 			imgStatus1.setImageDrawable(lampOn);
 			btnToggel1.setChecked(true);
 		}
-		else if (message.equals(CmdMessage.CMD_1_OFF)) {
+		else if (message.equals(CommandMessage.CMD_1_OFF)) {
 			imgStatus1.setImageDrawable(lampOff);
 			btnToggel1.setChecked(false);
 		}
-		else if (message.equals(CmdMessage.CMD_2_ON)) {
+		else if (message.equals(CommandMessage.CMD_2_ON)) {
 			imgStatus2.setImageDrawable(lampOn);
 			btnToggel2.setChecked(true);
 		}
-		else if (message.equals(CmdMessage.CMD_2_OFF)) {
+		else if (message.equals(CommandMessage.CMD_2_OFF)) {
 			imgStatus2.setImageDrawable(lampOff);
 			btnToggel2.setChecked(false);
 		}
-		else if (message.equals(CmdMessage.CMD_3_ON)) {
+		else if (message.equals(CommandMessage.CMD_3_ON)) {
 			imgStatus3.setImageDrawable(lampOn);
 			btnToggel3.setChecked(true);
 		}
-		else if (message.equals(CmdMessage.CMD_3_OFF)) {
+		else if (message.equals(CommandMessage.CMD_3_OFF)) {
 			imgStatus3.setImageDrawable(lampOff);
 			btnToggel3.setChecked(false);
 		}
-		else if (message.equals(CmdMessage.CMD_4_ON)) {
+		else if (message.equals(CommandMessage.CMD_4_ON)) {
 			imgStatus4.setImageDrawable(lampOn);
 			btnToggel4.setChecked(true);
 		}
-		else if (message.equals(CmdMessage.CMD_4_OFF)) {
+		else if (message.equals(CommandMessage.CMD_4_OFF)) {
 			imgStatus4.setImageDrawable(lampOff);
 			btnToggel4.setChecked(false);
 		}
@@ -411,8 +355,9 @@ public class MainActivity extends Activity implements OnClickListener,
 	
 	@Override
 	public void onBackPressed() {
-		Log.v(TAG, "onDestroy()");
-		if (mClient != null && mConnectionTask != null) {
+		Log.v(TAG, "onBackPressed()");
+		
+		if (mClient != null) {
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 			dialog.setTitle("Connection");
 			dialog.setMessage("Disconnect from Arduino?");
@@ -430,12 +375,8 @@ public class MainActivity extends Activity implements OnClickListener,
 		switch (which) {
 		case DialogInterface.BUTTON_POSITIVE:
 			if (mClient != null) {
-				mClient.close();
+				mClient.disconnect();
 				mClient = null;
-			}
-			if (mConnectionTask != null) {
-				mConnectionTask.cancel(true);
-				mConnectionTask = null;
 			}
 			finish();
 			break;
@@ -446,13 +387,4 @@ public class MainActivity extends Activity implements OnClickListener,
 		}
 	}
 	
-	/*@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		Log.v(TAG, "onDestroy()");
-		if (mConnectionTask != null) {
-			mConnectionTask.cancel(true);
-			mConnectionTask = null;
-		}
-	}*/
 }

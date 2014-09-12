@@ -31,29 +31,32 @@ public final class R {
         public static final int lamp_on_48=0x7f020003;
     }
     public static final class id {
-        public static final int action_settings=0x7f090011;
+        public static final int action_settings=0x7f090013;
         public static final int button_connect=0x7f090005;
         public static final int button_disconnect=0x7f090006;
         public static final int checkBox1=0x7f090004;
         public static final int editText1=0x7f090001;
         public static final int editText2=0x7f090003;
-        public static final int imageview_lamp1=0x7f090007;
-        public static final int imageview_lamp2=0x7f090009;
-        public static final int imageview_lamp3=0x7f09000b;
-        public static final int imageview_lamp4=0x7f09000e;
+        public static final int editText3=0x7f090012;
+        public static final int imageview_lamp1=0x7f090008;
+        public static final int imageview_lamp2=0x7f09000a;
+        public static final int imageview_lamp3=0x7f09000c;
+        public static final int imageview_lamp4=0x7f09000f;
         public static final int textView1=0x7f090000;
         public static final int textView2=0x7f090002;
-        public static final int textView3=0x7f09000c;
-        public static final int textView4=0x7f09000f;
-        public static final int toggleButton1=0x7f090008;
-        public static final int toggleButton2=0x7f09000a;
-        public static final int toggleButton3=0x7f09000d;
-        public static final int toggleButton4=0x7f090010;
+        public static final int textView3=0x7f09000d;
+        public static final int textView4=0x7f090010;
+        public static final int textView_ipAddress=0x7f090007;
+        public static final int toggleButton1=0x7f090009;
+        public static final int toggleButton2=0x7f09000b;
+        public static final int toggleButton3=0x7f09000e;
+        public static final int toggleButton4=0x7f090011;
     }
     public static final class layout {
         public static final int activity_login=0x7f030000;
         public static final int activity_main=0x7f030001;
-        public static final int progressbar=0x7f030002;
+        public static final int activity_settings=0x7f030002;
+        public static final int progressbar=0x7f030003;
     }
     public static final class menu {
         public static final int main=0x7f080000;
@@ -65,6 +68,7 @@ public final class R {
         public static final int label_connect=0x7f05000e;
         public static final int label_disconnect=0x7f05000f;
         public static final int label_halaman=0x7f05000b;
+        public static final int label_ipaddress=0x7f050010;
         public static final int label_kamar_utama_1=0x7f050008;
         public static final int label_kamar_utama_2=0x7f050009;
         public static final int label_login=0x7f050007;
@@ -72,14 +76,15 @@ public final class R {
         public static final int label_on=0x7f05000c;
         public static final int label_password=0x7f050005;
         public static final int label_ruang_tamu=0x7f05000a;
+        public static final int label_save=0x7f050011;
         public static final int label_show_password=0x7f050006;
         public static final int label_username=0x7f050004;
         public static final int label_welcome=0x7f050003;
-        public static final int lamp_on_off=0x7f050014;
-        public static final int no_connection_message=0x7f050013;
-        public static final int no_connection_title=0x7f050012;
-        public static final int status_connected=0x7f050010;
-        public static final int status_disconnected=0x7f050011;
+        public static final int lamp_on_off=0x7f050016;
+        public static final int no_connection_message=0x7f050015;
+        public static final int no_connection_title=0x7f050014;
+        public static final int status_connected=0x7f050012;
+        public static final int status_disconnected=0x7f050013;
     }
     public static final class style {
         /** 

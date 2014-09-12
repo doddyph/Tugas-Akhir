@@ -9,7 +9,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import com.tugasakhir.droidduino.Settings;
+import com.tugasakhir.droidduino.connection.ConnectionMessageHandler.ConnectionListener;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 public class ArduinoClient {
@@ -24,19 +26,23 @@ public class ArduinoClient {
 	private BufferedReader mBuff; // to store the incoming bytes from server
 	private boolean mRun = true;
 	
-	private MessageHandler mHandler;
+	private ConnectionMessageHandler connMsgHandler;
 	
-	public ArduinoClient(MessageHandler handler) {
-		mHandler = handler;
+	public ArduinoClient(ConnectionListener listener) {
+		connMsgHandler = new ConnectionMessageHandler(listener);
 	}
 	
-	public void run() {
+	public void connect() {
+		new ConnectionTask().execute();
+	}
+	
+	public void connectAndWait() {
 		try {
 			mSocket = new Socket();
 			mSocket.connect(new InetSocketAddress(Settings.IP_ADDRESS, PORT), TIMEOUT);
 			
 			if (mSocket.isConnected()) {
-				setConnectionStatus(true);
+				informConnectionStatus(true);
 				
 				mIn = mSocket.getInputStream();
 				mOut = mSocket.getOutputStream();
@@ -45,53 +51,52 @@ public class ArduinoClient {
 				while (mRun) {
 					String msgFromServer = mBuff.readLine();
 					byte[] msgBytes = msgFromServer.getBytes();
-					receiveMessage(new String(msgBytes));
+					doIncomingMessageProcess(new String(msgBytes));
 				}
 			}
 		} catch (Exception e) {
-			Log.e(TAG, "run() "+e.getMessage());
+			Log.e(TAG, "connect() "+e.getMessage());
 		} finally {
-			close();
+			disconnect();
 		}
 	}
 	
-	private void setConnectionStatus(boolean connected) {
-		if (mHandler != null) {
-			mHandler.sendMessage(MessageHandler.MessageBuilder(
-					connected,
-					PayloadKey.CONNECTION_STATUS));
-		}
-	}
-	
-	private void receiveMessage(String message) {
-		if (mHandler != null) {
-			mHandler.sendMessage(MessageHandler.MessageBuilder(
+	private void doIncomingMessageProcess(String message) {
+		if (connMsgHandler != null) {
+			connMsgHandler.sendMessage(ConnectionMessageHandler.MessageBuilder(
 					message,
 					PayloadKey.RECEIVE_MESSAGE));
 		}
 	}
 	
-	public void sendMessage(String message) {
+	private void informConnectionStatus(boolean connected) {
+		if (connMsgHandler != null) {
+			connMsgHandler.sendMessage(ConnectionMessageHandler.MessageBuilder(
+					connected,
+					PayloadKey.CONNECTION_STATUS));
+		}
+	}
+	
+	public void sendCommand(String message) {
 		if (mSocket.isConnected()) {
 			try {
 				mOut.write(message.getBytes());
 			} catch (IOException e) {
-				Log.e(TAG, "sendMessage() "+e.getMessage());
+				Log.e(TAG, "sendCommand() "+e.getMessage());
 				return;
 			}
 			
-			if (mHandler != null) {
-				mHandler.sendMessage(MessageHandler.MessageBuilder(
+			if (connMsgHandler != null) {
+				connMsgHandler.sendMessage(ConnectionMessageHandler.MessageBuilder(
 						true,
 						PayloadKey.SEND_MESSAGE));
 			}
 		}
 	}
 	
-	public void close() {
+	public void disconnect() {
 		try {
-			setConnectionStatus(false);
-			mHandler = null;
+			connMsgHandler = null;
 			mRun = false;
 			
 			if (mOut != null) {
@@ -103,8 +108,24 @@ public class ArduinoClient {
 			if (mSocket != null) {
 				mSocket.close();
 			}
+			
+			informConnectionStatus(false);
 		} catch (Exception e) {
-			Log.e(TAG, "close() "+e.getMessage());
+			Log.e(TAG, "disconnect() "+e.getMessage());
+		}
+	}
+	
+	private class ConnectionTask extends AsyncTask<Void, String, Void> {
+		
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			connectAndWait();
+			return null;
+		}
+		
+		@Override
+		protected void onCancelled() {
+			disconnect();
 		}
 	}
 }
