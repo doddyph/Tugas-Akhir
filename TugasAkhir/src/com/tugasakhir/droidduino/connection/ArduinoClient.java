@@ -12,6 +12,7 @@ import com.tugasakhir.droidduino.Settings;
 import com.tugasakhir.droidduino.connection.ConnectionMessageHandler.ConnectionListener;
 
 import android.os.AsyncTask;
+import android.os.Message;
 import android.util.Log;
 
 public class ArduinoClient {
@@ -39,19 +40,22 @@ public class ArduinoClient {
 	public void connectAndWait() {
 		try {
 			mSocket = new Socket();
-			mSocket.connect(new InetSocketAddress(Settings.IP_ADDRESS, PORT), TIMEOUT);
+			InetSocketAddress address = new InetSocketAddress(Settings.IP_ADDRESS, PORT);
+			mSocket.connect(address, TIMEOUT);
 			
 			if (mSocket.isConnected()) {
 				informConnectionStatus(true);
 				
 				mIn = mSocket.getInputStream();
 				mOut = mSocket.getOutputStream();
-				mBuff = new BufferedReader(new InputStreamReader(mIn));
+				InputStreamReader reader = new InputStreamReader(mIn);
+				mBuff = new BufferedReader(reader);
 				
 				while (mRun) {
 					String msgFromServer = mBuff.readLine();
 					byte[] msgBytes = msgFromServer.getBytes();
-					doIncomingMessageProcess(new String(msgBytes));
+					String msg = new String(msgBytes);
+					doIncomingMessageProcess(msg);
 				}
 			}
 		} catch (Exception e) {
@@ -61,35 +65,35 @@ public class ArduinoClient {
 		}
 	}
 	
-	private void doIncomingMessageProcess(String message) {
+	private void doIncomingMessageProcess(String msg) {
 		if (connMsgHandler != null) {
-			connMsgHandler.sendMessage(ConnectionMessageHandler.MessageBuilder(
-					message,
-					PayloadKey.RECEIVE_MESSAGE));
+			Message message = ConnectionMessageHandler.
+					MessageBuilder(msg, PayloadKey.RECEIVE_MESSAGE);
+			connMsgHandler.sendMessage(message);
 		}
 	}
 	
 	private void informConnectionStatus(boolean connected) {
 		if (connMsgHandler != null) {
-			connMsgHandler.sendMessage(ConnectionMessageHandler.MessageBuilder(
-					connected,
-					PayloadKey.CONNECTION_STATUS));
+			Message message = ConnectionMessageHandler.
+					MessageBuilder(connected, PayloadKey.CONNECTION_STATUS);
+			connMsgHandler.sendMessage(message);
 		}
 	}
 	
-	public void sendCommand(String message) {
+	public void sendCommand(String msg) {
 		if (mSocket.isConnected()) {
 			try {
-				mOut.write(message.getBytes());
+				mOut.write(msg.getBytes());
 			} catch (IOException e) {
 				Log.e(TAG, "sendCommand() "+e.getMessage());
 				return;
 			}
 			
 			if (connMsgHandler != null) {
-				connMsgHandler.sendMessage(ConnectionMessageHandler.MessageBuilder(
-						true,
-						PayloadKey.SEND_MESSAGE));
+				Message message = ConnectionMessageHandler.
+						MessageBuilder(true, PayloadKey.SEND_MESSAGE);
+				connMsgHandler.sendMessage(message);
 			}
 		}
 	}

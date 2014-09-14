@@ -32,20 +32,20 @@ public class ConnectionMessageHandler extends Handler {
 		}
 	}
 	
-	public static Message MessageBuilder(String message, String payloadKey) {
+	public static Message MessageBuilder(String msg, String payloadKey) {
 		Bundle b = new Bundle();
-		b.putString(payloadKey, message);
-		Message msg = new Message();
-		msg.setData(b);
-		return msg;
+		b.putString(payloadKey, msg);
+		Message message = new Message();
+		message.setData(b);
+		return message;
 	}
 	
 	public static Message MessageBuilder(boolean value, String payloadKey) {
 		Bundle b = new Bundle();
 		b.putBoolean(payloadKey, value);
-		Message msg = new Message();
-		msg.setData(b);
-		return msg;
+		Message message = new Message();
+		message.setData(b);
+		return message;
 	}
 	
 	public interface ConnectionListener {

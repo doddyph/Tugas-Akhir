@@ -100,8 +100,9 @@ public class MainActivity extends Activity implements OnClickListener,
 //			showProgressBar();
 		}
 		else {
-			showAlertDialog(getString(R.string.no_connection_title),
-					getString(R.string.no_connection_message));
+			String title = getString(R.string.no_connection_title);
+			String message = getString(R.string.no_connection_message);
+			showAlertDialog(title, message);
 		}
 	}
 	
@@ -156,35 +157,35 @@ public class MainActivity extends Activity implements OnClickListener,
 	}
 	
 	private void doToggelButton1() {
-		mCurrentMessage = CommandMessage.CMD_1_OFF;
+		String message = CommandMessage.CMD_1_OFF;
 		if (btnToggel1.isChecked()) {
-			mCurrentMessage = CommandMessage.CMD_1_ON;
+			message = CommandMessage.CMD_1_ON;
 		}
-		sendCommand();
+		sendCommand(message);
 	}
 	
 	private void doToggelButton2() {
-		mCurrentMessage = CommandMessage.CMD_2_OFF;
+		String message = CommandMessage.CMD_2_OFF;
 		if (btnToggel2.isChecked()) {
-			mCurrentMessage = CommandMessage.CMD_2_ON;
+			message = CommandMessage.CMD_2_ON;
 		}
-		sendCommand();
+		sendCommand(message);
 	}
 
 	private void doToggelButton3() {
-		mCurrentMessage = CommandMessage.CMD_3_OFF;
+		String message = CommandMessage.CMD_3_OFF;
 		if (btnToggel3.isChecked()) {
-			mCurrentMessage = CommandMessage.CMD_3_ON;
+			message = CommandMessage.CMD_3_ON;
 		}
-		sendCommand();
+		sendCommand(message);
 	}
 
 	private void doToggelButton4() {
-		mCurrentMessage = CommandMessage.CMD_4_OFF;
+		String message = CommandMessage.CMD_4_OFF;
 		if (btnToggel4.isChecked()) {
-			mCurrentMessage = CommandMessage.CMD_4_ON;
+			message = CommandMessage.CMD_4_ON;
 		}
-		sendCommand();
+		sendCommand(message);
 	}
 	
 	private void showToast(String text) {
@@ -199,9 +200,10 @@ public class MainActivity extends Activity implements OnClickListener,
 		alertDialog.show();
 	}
 	
-	private void sendCommand() {
+	private void sendCommand(String message) {
+		mCurrentMessage = message;
 		try {
-			mClient.sendCommand(mCurrentMessage + "\n");
+			mClient.sendCommand(message + "\n");
 		} catch (Exception e) {
 			showAlertDialog("Send Message", e.getMessage());
 		}
@@ -213,13 +215,14 @@ public class MainActivity extends Activity implements OnClickListener,
 		
 		if (connected) {
 			enableAllToggleButton();
-			showToast(getString(R.string.status_connected));
+			String text = getString(R.string.status_connected);
+			showToast(text);
 			
 			btnConnect.setVisibility(View.GONE);
 			btnDisconnect.setVisibility(View.VISIBLE);
 			
-			mCurrentMessage = CommandMessage.CMD_GET_STATUS;
-			sendCommand();
+			String message = CommandMessage.CMD_GET_STATUS;
+			sendCommand(message);
 		}
 		else {
 			turnOffAllLamp();
